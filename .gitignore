@@ -1,1 +1,4 @@
-.vs
+.vs/
+bin/
+obj/
+/server/server/appsettings.Development.json
