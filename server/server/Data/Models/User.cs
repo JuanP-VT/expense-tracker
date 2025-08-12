@@ -1,23 +1,22 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 
 public class User
 {
     [Key]
-    public int id { get; set; }
+    public int Id { get; set; }
 
     [Required]
     [MinLength(4)]
     [MaxLength(20)]
-    public string name { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
     [Required]
     [MaxLength(255)]
-    public string hashedPass { get; set; } = string.Empty;
+    public string HashedPass { get; set; } = string.Empty;
 
     [Required]
-    public int role { get; set; }
+    public int Role { get; set; }
 
     [Required]
-    public DateTime createdAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 }
