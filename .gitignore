@@ -2,3 +2,4 @@
 bin/
 obj/
 /server/server/appsettings.Development.json
+/server/server/appsettings.json
