@@ -5,11 +5,11 @@ public class CreateUserDto
     [Required]
     [MinLength(4)]
     [MaxLength(20)]
-    public string Name { set; get; }
+    public string Name { set; get; } = string.Empty;
 
     [Required]
     [MinLength(6)]
     [MaxLength(20)]
-    public string Password { set; get; }
+    public string Password { set; get; } = string.Empty;
 
 }
