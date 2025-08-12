@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +13,7 @@ builder.Services.AddSwaggerGen();
 
 //Database
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>options.UseNpgsql(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 
 var app = builder.Build();
 
@@ -28,5 +29,23 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapPost("register", async (CreateUserDto userDto, ApplicationDbContext dbContext) =>
+{
+    string hashedPass = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
+
+    var newUser = new User
+    {
+        Name = userDto.Name,
+        HashedPass = hashedPass,
+        Role = (int)Roles.User,
+        CreatedAt = DateTime.UtcNow
+    };
+
+    dbContext.users.Add(newUser);
+    await dbContext.SaveChangesAsync();
+    return Results.Ok(new { Message = "User Created" });
+
+});
 
 app.Run();
