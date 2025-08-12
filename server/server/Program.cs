@@ -31,30 +31,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapPost("register", async (CreateUserDto userDto, ApplicationDbContext dbContext) =>
-{
-
-    //Validate name
-    var userExist = await dbContext.users.AnyAsync(u => string.Equals(u.Name, userDto.Name, StringComparison.OrdinalIgnoreCase));
-
-    if (userExist)
-    {
-        return Results.Conflict("A user with that name already exists");
-    }
-
-    string hashedPass = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
-
-    var newUser = new User
-    {
-        Name = userDto.Name,
-        HashedPass = hashedPass,
-        Role = (int)Roles.User,
-        CreatedAt = DateTime.UtcNow
-    };
-
-    dbContext.users.Add(newUser);
-    await dbContext.SaveChangesAsync();
-    return Results.Ok(new { Message = "User Created" });
-
-});
 app.Run();
