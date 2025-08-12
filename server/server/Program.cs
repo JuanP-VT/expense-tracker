@@ -20,6 +20,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    Console.WriteLine("WE ARE IN FUCKING DEVELOPMENT");
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -32,6 +33,15 @@ app.MapControllers();
 
 app.MapPost("register", async (CreateUserDto userDto, ApplicationDbContext dbContext) =>
 {
+
+    //Validate name
+    var userExist = await dbContext.users.AnyAsync(u => string.Equals(u.Name, userDto.Name, StringComparison.OrdinalIgnoreCase));
+
+    if (userExist)
+    {
+        return Results.Conflict("A user with that name already exists");
+    }
+
     string hashedPass = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
 
     var newUser = new User
@@ -47,5 +57,4 @@ app.MapPost("register", async (CreateUserDto userDto, ApplicationDbContext dbCon
     return Results.Ok(new { Message = "User Created" });
 
 });
-
 app.Run();
