@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using server.Data.DTO.Responses;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace server.Controllers
 {
@@ -8,10 +12,58 @@ namespace server.Controllers
     public class RegisterUserController : ControllerBase
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly IConfiguration _configuration;
 
-        public RegisterUserController(ApplicationDbContext dbContext)
+        public RegisterUserController(ApplicationDbContext dbContext, IConfiguration configuration)
         {
             _dbContext = dbContext;
+            _configuration = configuration;
+        }
+
+        [HttpPost("login")]
+        public async Task<ActionResult<StandardResponse>> Login(CreateUserDto userDto)
+        {
+            User? user = await _dbContext.users.FirstOrDefaultAsync(u => u.Name.ToLower() == userDto.Name.ToLower());
+
+
+            if (user == null)
+            {
+                return Unauthorized(new StandardResponse { Message = "Credenciales incorrectas" });
+            }
+
+            bool isValidPass = BCrypt.Net.BCrypt.Verify(userDto.Password, user.HashedPass);
+
+            if (!isValidPass)
+            {
+                return Unauthorized(new StandardResponse { Message = "Credenciales incorrectas" });
+            }
+
+            //Generate jwt
+
+            List<Claim> claims = new List<Claim>();
+
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
+            claims.Add(new Claim(ClaimTypes.Name, user.Name));
+            claims.Add(new Claim(ClaimTypes.Role, user.Role.ToString()));
+
+            var secret = _configuration["JwtSettings:Secret"];
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
+
+            var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["JwtSettings:Issuer"],
+                audience: _configuration["JwtSettings:Audience"],
+                claims: claims,
+                notBefore: DateTime.UtcNow,
+                expires: DateTime.UtcNow.AddHours(1),
+                signingCredentials: signingCredentials);
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwt = tokenHandler.WriteToken(token);
+
+            return Ok(new { Token = jwt });
         }
 
         [HttpPost("register")]
@@ -43,5 +95,11 @@ namespace server.Controllers
 
             return Ok(new StandardResponse { Message = "¡User Created!" });
         }
+
+
     }
+
+
+
+
 }
