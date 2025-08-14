@@ -7,5 +7,10 @@ public class ApplicationDbContext : DbContext
     {
     }
 
-    public DbSet<User> users { get; set; }    
+    public DbSet<User> users { get; set; }
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder.Properties<Enum>().HaveConversion<string>();
+    }
 }

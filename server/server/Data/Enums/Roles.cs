@@ -1,4 +1,4 @@
-enum Roles
+public enum Roles
 {
     User = 0,
     Guest = 1,

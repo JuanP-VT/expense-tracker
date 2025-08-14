@@ -15,7 +15,7 @@ public class User
     public string HashedPass { get; set; } = string.Empty;
 
     [Required]
-    public int Role { get; set; }
+    public Roles Role { get; set; }
 
     [Required]
     public DateTime CreatedAt { get; set; }
