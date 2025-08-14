@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using server.Data.Models;
 
 public class ApplicationDbContext : DbContext
 {
@@ -8,6 +9,7 @@ public class ApplicationDbContext : DbContext
     }
 
     public DbSet<User> users { get; set; }
+    public DbSet<Transaction> transactions { get; set; }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
