@@ -1,6 +1,9 @@
-public enum Roles
+namespace server.Data.Enums
 {
-    User = 0,
-    Guest = 1,
-    Admin = 2,
+    public enum Roles
+    {
+        User = 0,
+        Guest = 1,
+        Admin = 2,
+    }
 }
