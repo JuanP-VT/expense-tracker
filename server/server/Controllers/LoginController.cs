@@ -9,12 +9,12 @@ using System.Text;
 namespace server.Controllers
 {
     [ApiController]
-    public class RegisterUserController : ControllerBase
+    public class LoginController : ControllerBase
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IConfiguration _configuration;
 
-        public RegisterUserController(ApplicationDbContext dbContext, IConfiguration configuration)
+        public LoginController(ApplicationDbContext dbContext, IConfiguration configuration)
         {
             _dbContext = dbContext;
             _configuration = configuration;
