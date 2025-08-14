@@ -1,3 +1,4 @@
+using server.Data.Enums;
 using System.ComponentModel.DataAnnotations;
 
 public class User
